@@ -52,7 +52,7 @@ export async function verifyRequestSession(request: NextRequest): Promise<boolea
 }
 
 export async function getSessionFromCookies(): Promise<boolean> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) return false;
   return verifySession(token);
@@ -69,7 +69,7 @@ export async function getSessionEmail(request: NextRequest): Promise<string> {
 }
 
 export async function getEmailFromCookies(): Promise<string> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) throw new Error('Not authenticated');
 

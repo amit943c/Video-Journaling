@@ -5,11 +5,12 @@ import type { ApiResponse, SignedUrlResult } from '@/lib/types';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const email = await getSessionEmail(request);
-    const videoId = decodeURIComponent(params.id);
+    const { id } = await params;
+    const videoId = decodeURIComponent(id);
     const gcsPath = await getVideoGcsPath(email, videoId);
 
     if (!gcsPath) {

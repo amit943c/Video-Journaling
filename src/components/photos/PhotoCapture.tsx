@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { getRandomJokeExcluding } from '@/lib/jokes';
+import { loadFaceDetection } from '@/lib/face-detection';
 
 interface PhotoCaptureProps {
   onPhotoCaptured: () => void;
@@ -33,7 +34,7 @@ export default function PhotoCapture({ onPhotoCaptured }: PhotoCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const detectionLoopRef = useRef<number | null>(null);
-  const faceapiRef = useRef<typeof import('face-api.js') | null>(null);
+  const faceapiRef = useRef<any>(null);
   const lastJokeRef = useRef('');
 
   const [cameraActive, setCameraActive] = useState(false);
@@ -53,12 +54,7 @@ export default function PhotoCapture({ onPhotoCaptured }: PhotoCaptureProps) {
   const loadFaceModels = useCallback(async () => {
     if (faceapiRef.current) return faceapiRef.current;
     try {
-      const faceapi = await import('face-api.js');
-      const MODEL_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights';
-      await Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
-      ]);
+      const faceapi = await loadFaceDetection();
       faceapiRef.current = faceapi;
       setModelsLoaded(true);
       return faceapi;

@@ -5,11 +5,12 @@ import type { ApiResponse, SignedUrlResult } from '@/lib/types';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const email = await getSessionEmail(request);
-    const photoId = decodeURIComponent(params.id);
+    const { id } = await params;
+    const photoId = decodeURIComponent(id);
     const gcsPath = await getPhotoGcsPath(email, photoId);
 
     if (!gcsPath) {
